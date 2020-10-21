@@ -323,7 +323,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100002}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
@@ -459,7 +459,18 @@ MonoBehaviour:
     m_ActionId: af0a61da-7ba0-4559-919c-b759d4a01643
     m_ActionName: UI/Pause[/Keyboard/escape,/DualShock4GamepadHID/select,/XInputControllerWindows/select]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5125025818288651203}
+        m_MethodName: OnFlip
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: cea49751-c010-4f27-81f8-ee5b0f3dbe02
     m_ActionName: Player/Flip[/Mouse/leftButton]
   m_NeverAutoSwitchControlSchemes: 0
