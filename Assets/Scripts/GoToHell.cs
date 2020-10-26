@@ -6,6 +6,9 @@ public class GoToHell : MonoBehaviour
     private PlayerInput input;
     private FirstPersonDrifter movement;
 
+    public GameObject lightCamGO;
+    public GameObject hellCamGO;
+
     private bool inHell = false;
 
     // the heights that the player will be moved to 
@@ -19,28 +22,19 @@ public class GoToHell : MonoBehaviour
     private Vector3 end;
     private Vector3 velocity = Vector3.zero;
 
-
-
-
-    // Start is called before the first frame update
     void Start()
     {
       input = GetComponent<PlayerInput>();
       movement = GetComponent<FirstPersonDrifter>();
     }
 
-    // Update is called once per frame
     void Update()
     {
       if (inTransition) {
         // lerp
         transform.position = Vector3.SmoothDamp(
             transform.position, end, ref velocity, 1 / transitionSpeed);
-        // if we've reached the destionation:
-        //
-        // inHell = !inHell
-        // inTranstion = false
-        // movement.gravity = -movement.gravity;
+
         if (FloatEqual(transform.position.y, end.y)) {
           inTransition = false;
           input.enabled = true;
@@ -66,6 +60,19 @@ public class GoToHell : MonoBehaviour
 
       // only activate on mouse button released
       if (ctx.canceled) {
+        // switch camera
+
+        if (inHell) {
+          lightCamGO.SetActive(true);
+          hellCamGO.SetActive(false);
+        } else {
+          lightCamGO.SetActive(false);
+          hellCamGO.SetActive(true);
+        }
+        inHell = !inHell;
+
+
+#if false
         // disable input
         input.enabled = false;
         movement.enabled = false;
@@ -82,6 +89,7 @@ public class GoToHell : MonoBehaviour
 
         // signal to begin transition
         inTransition = true;
+#endif
       }
 
     }
