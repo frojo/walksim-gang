@@ -6,10 +6,13 @@ public class TransitionWorlds : MonoBehaviour
     private PlayerInput input;
     private FirstPersonDrifter movement;
     private MouseLook xLook;
+    private AudioSource bgm;
 
     public GameObject lightCamGO;
     public GameObject hellCamGO;
     public GameObject downWorldGOs;
+    public AudioClip dayBGM;
+    public AudioClip underBGM;
 
     private bool inHell = false;
 
@@ -29,6 +32,7 @@ public class TransitionWorlds : MonoBehaviour
       input = GetComponent<PlayerInput>();
       movement = GetComponent<FirstPersonDrifter>();
       xLook = GetComponent<MouseLook>();
+      bgm = GetComponent<AudioSource>();
 
       GoToUpWorld();
     }
@@ -103,6 +107,9 @@ public class TransitionWorlds : MonoBehaviour
           movement.SetUpsideDown(false);
           xLook.SetUpsideDown(false);
           downWorldGOs.SetActive(false);
+          bgm.clip = dayBGM;
+          bgm.volume = .15f;
+          bgm.Play();
     }
 
     void GoToDownWorld() {
@@ -111,7 +118,11 @@ public class TransitionWorlds : MonoBehaviour
           movement.SetUpsideDown(true);
           xLook.SetUpsideDown(true);
           downWorldGOs.SetActive(true);
+          bgm.clip = underBGM;
+          bgm.volume = .3f;
+          bgm.Play();
     }
+
     // floats are dumb
     bool FloatEqual(float a, float b) {
       return Mathf.Abs(a - b) < .01;
