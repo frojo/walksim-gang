@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class GoToHell : MonoBehaviour
+public class TransitionWorlds : MonoBehaviour
 {
     private PlayerInput input;
     private FirstPersonDrifter movement;
+    private MouseLook xLook;
 
     public GameObject lightCamGO;
     public GameObject hellCamGO;
+    public GameObject downWorldGOs;
 
     private bool inHell = false;
 
@@ -26,6 +28,9 @@ public class GoToHell : MonoBehaviour
     {
       input = GetComponent<PlayerInput>();
       movement = GetComponent<FirstPersonDrifter>();
+      xLook = GetComponent<MouseLook>();
+
+      GoToUpWorld();
     }
 
     void Update()
@@ -63,11 +68,9 @@ public class GoToHell : MonoBehaviour
         // switch camera
 
         if (inHell) {
-          lightCamGO.SetActive(true);
-          hellCamGO.SetActive(false);
+          GoToUpWorld();
         } else {
-          lightCamGO.SetActive(false);
-          hellCamGO.SetActive(true);
+          GoToDownWorld();
         }
         inHell = !inHell;
 
@@ -94,6 +97,21 @@ public class GoToHell : MonoBehaviour
 
     }
 
+    void GoToUpWorld() {
+          lightCamGO.SetActive(true);
+          hellCamGO.SetActive(false);
+          movement.SetUpsideDown(false);
+          xLook.SetUpsideDown(false);
+          downWorldGOs.SetActive(false);
+    }
+
+    void GoToDownWorld() {
+          lightCamGO.SetActive(false);
+          hellCamGO.SetActive(true);
+          movement.SetUpsideDown(true);
+          xLook.SetUpsideDown(true);
+          downWorldGOs.SetActive(true);
+    }
     // floats are dumb
     bool FloatEqual(float a, float b) {
       return Mathf.Abs(a - b) < .01;

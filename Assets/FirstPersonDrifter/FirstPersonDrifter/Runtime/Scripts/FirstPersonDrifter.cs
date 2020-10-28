@@ -55,6 +55,8 @@ public class FirstPersonDrifter : MonoBehaviour
     private float inputY;
     private bool isRunning;
     private bool isJumping;
+    
+    private bool upsideDown;
 
     private void Start()
     {
@@ -166,9 +168,19 @@ public class FirstPersonDrifter : MonoBehaviour
         //print ("Ouch! Fell " + fallDistance + " units!");   
     }
 
+    // sometimes you wanna be upside down
+    public void SetUpsideDown(bool tf) {
+      upsideDown = tf;
+    }
+
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        inputX = ctx.ReadValue<Vector2>().x;
+        if (upsideDown) {
+          inputX = -ctx.ReadValue<Vector2>().x;
+        } else {
+          inputX = ctx.ReadValue<Vector2>().x;
+        }
+
         inputY = ctx.ReadValue<Vector2>().y;
     }
 

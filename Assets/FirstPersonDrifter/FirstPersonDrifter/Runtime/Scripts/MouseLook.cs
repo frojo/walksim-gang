@@ -38,6 +38,8 @@ public class MouseLook : MonoBehaviour
 	private float inputX;
 	private float inputY;
 
+  private bool upsideDown;
+
 	private void Start ()
 	{			
 		if (GetComponent<Rigidbody>()) GetComponent<Rigidbody>().freezeRotation = true;
@@ -78,9 +80,22 @@ public class MouseLook : MonoBehaviour
 		return Mathf.Clamp (angle, min, max);
 	}
 
+  public void SetUpsideDown(bool tf) {
+    upsideDown = tf;
+  }
+
 	public void Look(InputAction.CallbackContext ctx)
 	{
-		inputX = ctx.ReadValue<Vector2>().x * 0.01f;
+    if (upsideDown) {
+		  inputX = -ctx.ReadValue<Vector2>().x * 0.01f;
+    } else {
+		  inputX = ctx.ReadValue<Vector2>().x * 0.01f;
+    }
+
+    // if (inputX > 0) {
+    //   print("turning head with upsideDown = " + upsideDown);
+    // }
+
 		inputY = ctx.ReadValue<Vector2>().y * 0.01f;
 	}
 }
