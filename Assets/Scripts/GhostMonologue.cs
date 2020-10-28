@@ -25,7 +25,6 @@ public class GhostMonologue : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-      print("triggered!!!");
       if (!played) {
         played = true;
         StartCoroutine(playClipsSequentially());
