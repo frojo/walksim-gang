@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // allows player to zoom in the FOV when holding a button down
-[RequireComponent (typeof (Camera))]
 public class CameraZoom : MonoBehaviour
 {
 	public float zoomFOV = 30.0f;
@@ -19,7 +18,7 @@ public class CameraZoom : MonoBehaviour
 
 	private void Start ()
 	{
-		cam = Camera.main;
+		cam = GetComponent<Camera>();
 		baseFOV = cam.fieldOfView;
 	}
 	private IEnumerator ZoomTo(float target)
@@ -31,8 +30,17 @@ public class CameraZoom : MonoBehaviour
 		}
 	}
 
+  public void SwitchCam(Camera newCam)
+  {
+		cam = newCam;
+		baseFOV = cam.fieldOfView;
+  }
+
 	public void OnZoom(InputAction.CallbackContext ctx)
 	{
+    if (!gameObject.activeSelf) {
+      return;
+    }
 		if (ctx.performed)
 		{
 			StopAllCoroutines();

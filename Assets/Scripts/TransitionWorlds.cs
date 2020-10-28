@@ -1,10 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class GoToHell : MonoBehaviour
+public class TransitionWorlds : MonoBehaviour
 {
     private PlayerInput input;
     private FirstPersonDrifter movement;
+    private MouseLook xLook;
+    private AudioSource bgm;
+
+    public GameObject lightCamGO;
+    public GameObject hellCamGO;
+    public GameObject downWorldGOs;
+    public AudioClip dayBGM;
+    public AudioClip underBGM;
 
     private bool inHell = false;
 
@@ -19,28 +27,23 @@ public class GoToHell : MonoBehaviour
     private Vector3 end;
     private Vector3 velocity = Vector3.zero;
 
-
-
-
-    // Start is called before the first frame update
     void Start()
     {
       input = GetComponent<PlayerInput>();
       movement = GetComponent<FirstPersonDrifter>();
+      xLook = GetComponent<MouseLook>();
+      bgm = GetComponent<AudioSource>();
+
+      GoToUpWorld();
     }
 
-    // Update is called once per frame
     void Update()
     {
       if (inTransition) {
         // lerp
         transform.position = Vector3.SmoothDamp(
             transform.position, end, ref velocity, 1 / transitionSpeed);
-        // if we've reached the destionation:
-        //
-        // inHell = !inHell
-        // inTranstion = false
-        // movement.gravity = -movement.gravity;
+
         if (FloatEqual(transform.position.y, end.y)) {
           inTransition = false;
           input.enabled = true;
@@ -66,6 +69,17 @@ public class GoToHell : MonoBehaviour
 
       // only activate on mouse button released
       if (ctx.canceled) {
+        // switch camera
+
+        if (inHell) {
+          GoToUpWorld();
+        } else {
+          GoToDownWorld();
+        }
+        inHell = !inHell;
+
+
+#if false
         // disable input
         input.enabled = false;
         movement.enabled = false;
@@ -82,8 +96,31 @@ public class GoToHell : MonoBehaviour
 
         // signal to begin transition
         inTransition = true;
+#endif
       }
 
+    }
+
+    void GoToUpWorld() {
+          lightCamGO.SetActive(true);
+          hellCamGO.SetActive(false);
+          movement.SetUpsideDown(false);
+          xLook.SetUpsideDown(false);
+          downWorldGOs.SetActive(false);
+          bgm.clip = dayBGM;
+          bgm.volume = .15f;
+          bgm.Play();
+    }
+
+    void GoToDownWorld() {
+          lightCamGO.SetActive(false);
+          hellCamGO.SetActive(true);
+          movement.SetUpsideDown(true);
+          xLook.SetUpsideDown(true);
+          downWorldGOs.SetActive(true);
+          bgm.clip = underBGM;
+          bgm.volume = .3f;
+          bgm.Play();
     }
 
     // floats are dumb
