@@ -28,9 +28,9 @@ public class TransitionWorlds : MonoBehaviour
 
     // used for the transition where we are moving the player to/from hell
     private bool inTransition = false;
-    private Vector3 start;
-    private Vector3 end;
-    private Vector3 velocity = Vector3.zero;
+
+    // the ghost we're in the middle of listening to, if any
+    public GhostMonologue talkingGhost = null;
 
     void Start()
     {
@@ -44,11 +44,6 @@ public class TransitionWorlds : MonoBehaviour
 
     void Update()
     {
-      if (inTransition) {
-        // lerp
-        transform.position = Vector3.SmoothDamp(
-            transform.position, end, ref velocity, 1 / transitionSpeed);
-      }
       
     }
 
@@ -110,6 +105,10 @@ public class TransitionWorlds : MonoBehaviour
           bgm.clip = underBGM;
           bgm.volume = .3f;
           bgm.Play();
+
+          if (talkingGhost) {
+            talkingGhost.ContinueMonologue();
+          }
     }
 
 

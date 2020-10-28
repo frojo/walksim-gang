@@ -5,11 +5,15 @@ using UnityEngine;
 public class GhostMonologue : MonoBehaviour
 {
 
+    //yeah this is hacky as fuck but it's late
+    public TransitionWorlds player;
+
     private AudioSource audio;
     private bool played = false;
+    private int currentLine = 0;
 
     public List<AudioClip> clips;
-    public float timeBetweenLines;
+    public float pauseBetweenLines;
 
     // Start is called before the first frame update
     void Start()
@@ -25,24 +29,39 @@ public class GhostMonologue : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+      if (player.talkingGhost) {
+        return;
+      }
+
       if (!played) {
         played = true;
-        StartCoroutine(playClipsSequentially());
+        player.talkingGhost = this;
+
+        StartCoroutine(playClipsSequentially(currentLine));
       }
     }
 
-    private IEnumerator playClipsSequentially()
+    public void ContinueMonologue() {
+        StartCoroutine(playClipsSequentially(currentLine));
+    }
+
+    private IEnumerator playClipsSequentially(int start)
     {
-      foreach (AudioClip clip in clips) {
-        audio.clip = clip;
+
+      for (int i = start; i < clips.Count; i++) {
+        audio.clip = clips[i];
 
         audio.Play();
 
         while (audio.isPlaying) {
           yield return null;
         }
+        
+        currentLine++;
 
-        yield return new WaitForSeconds(timeBetweenLines);
+        yield return new WaitForSeconds(pauseBetweenLines);
       }
+
+      player.talkingGhost = null;
     }
 }
