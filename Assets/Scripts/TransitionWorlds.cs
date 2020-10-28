@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
 public class TransitionWorlds : MonoBehaviour
@@ -13,6 +15,9 @@ public class TransitionWorlds : MonoBehaviour
     public GameObject downWorldGOs;
     public AudioClip dayBGM;
     public AudioClip underBGM;
+    public AudioClip dayToUnderSFX;
+    public AudioClip underToDaySFX;
+    public AudioSource transSFX;
 
     private bool inHell = false;
 
@@ -43,23 +48,6 @@ public class TransitionWorlds : MonoBehaviour
         // lerp
         transform.position = Vector3.SmoothDamp(
             transform.position, end, ref velocity, 1 / transitionSpeed);
-
-        if (FloatEqual(transform.position.y, end.y)) {
-          inTransition = false;
-          input.enabled = true;
-          movement.enabled = true;
-          inHell = !inHell;
-
-
-          if (inHell) {
-            movement.gravity = -10f;
-          } else {
-            movement.gravity = 10f;
-
-          }
-
-        }
-
       }
       
     }
@@ -69,7 +57,28 @@ public class TransitionWorlds : MonoBehaviour
 
       // only activate on mouse button released
       if (ctx.canceled) {
-        // switch camera
+        // don't overlap transitions...
+        if (inTransition) {
+          return;
+        }
+
+
+        inTransition = true;
+        StartCoroutine(DoTransition());
+      }
+
+    }
+
+    private IEnumerator DoTransition() {
+        if (inHell) {
+          transSFX.clip = underToDaySFX;
+        } else {
+          transSFX.clip = dayToUnderSFX;
+        }
+
+        transSFX.Play();
+
+        yield return new WaitForSeconds(.7f);
 
         if (inHell) {
           GoToUpWorld();
@@ -78,27 +87,7 @@ public class TransitionWorlds : MonoBehaviour
         }
         inHell = !inHell;
 
-
-#if false
-        // disable input
-        input.enabled = false;
-        movement.enabled = false;
-
-        // set start and end for the transition logic
-        start = transform.position;
-        float currX = transform.position.x;
-        float currZ = transform.position.y;
-        if (inHell) {
-          end = new Vector3(currX, lightY, currZ);
-        } else {
-          end = new Vector3(currX, hellY, currZ);
-        }
-
-        // signal to begin transition
-        inTransition = true;
-#endif
-      }
-
+        inTransition = false;
     }
 
     void GoToUpWorld() {
@@ -122,6 +111,7 @@ public class TransitionWorlds : MonoBehaviour
           bgm.volume = .3f;
           bgm.Play();
     }
+
 
     // floats are dumb
     bool FloatEqual(float a, float b) {
